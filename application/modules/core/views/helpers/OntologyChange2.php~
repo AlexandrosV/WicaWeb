@@ -1,0 +1,85 @@
+<?php
+
+/**
+ *
+ */
+class Zend_View_Helper_OntologyChange2 extends Zend_View_Helper_Abstract
+{
+	/**
+         * 
+         * @param string $phase
+         * @return array
+         */
+    
+    public function ontologyChange2($phrase,$section_id)
+    {
+        $sec = new Core_Model_Section();    
+        $semiotic = new Core_Model_Ontology();
+        $level = 0;
+        $count = 0;
+        if (isset($section_id)){
+            $sec_obj = $sec->find('wc_section', array('id' => $section_id));
+            if($sec_obj[0]->section_parent_id){
+                $obj = $this->searchLevel($section_id);
+                $ont_obj = $semiotic->find('wc_ontology', array('parent_id' => $obj['parent_id'], 'level' => $obj['level']));
+                $level++;
+            }
+            $sem_obj = $semiotic->find('wc_ontology', array('section_id'=>$section_id));
+        } else {
+            $sem_obj = $semiotic->find('wc_ontology', array('section_id'=>''));
+        }
+        
+        foreach ($sem_obj as $sub)
+        {
+            $output = "";
+            $count = 0;
+            if(isset($sub->semiotic) && $sub->semiotic!=NULL && $sub->semiotic!=''){
+                if($phrase == $sub->original)
+                    $output = str_replace($sub->original, $sub->semiotic, $phrase, $count);
+            }
+            if($count>0)
+                break;
+        }
+        
+        if($count == 0 && $level >0) {
+            foreach ($ont_obj as $sub)
+            {
+                $output = "";
+                $count = 0;
+                if(isset($sub->semiotic) && $sub->semiotic!=NULL && $sub->semiotic!=''){
+                    if($phrase == $sub->original)
+                        $output = str_replace($sub->original, $sub->semiotic, $phrase, $count);
+                }
+                if($count>0)
+                    break;
+            }
+        }
+        
+        if($count == 0) {
+                $output = $phrase;
+        }
+        
+        
+        
+        return array('count'=>$count,'phrase'=>$output);
+    }
+    
+    public function searchLevel($section_id){
+        $count = 20;
+        $level = 0;
+        $id = $section_id;
+        while($count>0){
+            $sec = new Core_Model_Section();
+            $sec_ob = $sec->find('wc_section',array('id' => $id));
+            if ($sec_ob[0]->section_parent_id){
+                $id = $sec_ob[0]->section_parent_id;
+                $level++;
+                $count--;
+            } else {
+                $level++;
+                break;
+            }
+        }
+        return array('parent_id' => $id,'level' => $level);
+    }
+}

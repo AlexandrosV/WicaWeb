@@ -1,0 +1,136 @@
+<?php 
+/**
+ * Index View. Renders the view of the index action 
+ *
+ *
+ */
+//translate library
+$lang = Zend_Registry::get('Zend_Translate');
+?>
+
+
+
+
+<div class="row-fluid option_bar_container">
+	<?php foreach($this->cms_links as $action_id => $opt): ?>
+	<?php if($opt['action']=='new' && $this->section_id != 'ws'): ?>
+	<ul class="nav nav-pills pull-right">
+        <li>
+            <a  id="new_ontology" class="pointer"><?php echo $lang->translate('New Alternaive Web Semiotic Unit'); ?></a>
+        </li>
+    </ul>
+    <?php endif; ?>
+    <?php endforeach; ?>
+</div>
+
+<div class="line-top alert_messages_container">
+	<?php echo $this->flashMessages();?>
+</div>
+
+<div class="row-fluid">
+	<div class="alert alert-info general_legend_text">
+		<div class="legend_inner_left">
+			<i class="icon-info-sign"></i>
+		</div>
+		<div class="right">
+			<i class="icon-pencil"></i> <?php echo $lang->translate('Update'); ?> &nbsp;&nbsp;
+			<i class="icon-trash"></i> <?php echo $lang->translate('Delete'); ?> &nbsp;&nbsp;
+		</div>
+	</div>
+</div>
+<?php // echo 'section id: '.$this->section_id;?>
+<?php // echo ' parent id: '.$this->parent_id;?>
+<?php // echo ' level: '.$this->level;?>
+<?php if ($this->section_list && count($this->section_list)>0): ?>
+<div class="row-fluid">
+<div class="row-fluid">
+    <div class="page-header-wica center">
+        <h1><?php echo $lang->translate('Subsection List'); ?></h1>
+    </div>
+</div>
+<div class="row-fluid table-bordered-header">	
+    <div class="span4"><b><?php echo $lang->translate('Subsection'); ?></b></div>
+    <div class="span4 last"><b><?php echo $lang->translate('Tools'); ?></b></div>
+</div>
+	
+<div id="sortable">
+<?php foreach ($this->section_list as $k => $entry): ?> 
+    <div class="row-fluid table-bordered-content <?php if(($k+1)%2): echo "odd"; endif;?>" id="<?php echo $entry['id']; ?>">
+        <div class="span4 pointer"><a class="pointer" id="edit_subsec_<?php echo $entry['id'];?>" parent_id="<?php echo $entry['section_parent_id'];?>"> <?php echo $entry['title']; ?> </a></div>
+        <div class="span4 last pointer">
+        <?php foreach($this->cms_links as $action_id => $opt): ?>
+        <?php if($opt['action']=='edit'): ?>
+            <a class="pointer" id="edit_subsec_<?php echo $entry['id']?>" parent_id="<?php echo $entry['section_parent_id'];?>" title="<?php echo $lang->translate('Update'); ?>"><i class="icon-pencil"></i></a> 
+        <?php endif; ?>
+        <?php endforeach; ?>	
+        </div>			
+    </div>					
+<?php endforeach ?>
+</div>
+</div>
+<?php endif;?>
+
+<?php if ($this->ontology_list && count($this->ontology_list)>0): ?>
+
+<div class="row-fluid">
+	<div class="page-header-wica center">
+		<h1><?php echo $lang->translate('Alternative Web Semiotic Unit List'); ?></h1>
+	</div>
+</div>
+
+<script type="text/javascript" charset="utf-8">
+	var delete_question = "<?php echo $lang->translate('All section info and its contents will be deleted. Would you like to continue?');?>";
+</script>
+	
+<form action="" method="post" name="frmOntologyOrder" id="frmOntologyOrder">
+	
+	<input type="hidden" id="section_id" name="section_id" value="<?php echo $this->section_id;?>">
+        <input type="hidden" id="parent_id" name="parent_id" value="<?php echo $this->parent_id;?>">
+        <input type="hidden" id="level" name="level" value="<?php echo $this->level;?>">
+	
+	<div class="row-fluid table-bordered-header">	
+		<div class="span4"><b><?php echo $lang->translate('Original'); ?></b></div>
+		<div class="span4"><b><?php echo $lang->translate('Ontology'); ?></b></div>
+		<div class="span4 last"><b><?php echo $lang->translate('Tools'); ?></b></div>
+	</div>
+	
+	<div id="sortable">
+		<?php foreach ($this->ontology_list as $k => $entry): ?> 
+		<div class="row-fluid table-bordered-content <?php if(($k+1)%2): echo "odd"; endif;?>" id="<?php echo $entry['id']; ?>">	
+			<div class="span4 pointer"><a class="pointer" id="edit_ontology_<?php echo $entry['id'];?>" ontology_id="<?php echo $entry['id'];?>"> <?php echo $entry['original']; ?> </a></div>
+			<div class="span4 pointer"><?php echo $entry['semiotic']; ?></div>			
+			<div class="span4 last pointer">
+			<?php foreach($this->cms_links as $action_id => $opt): ?>
+			<?php if($opt['action']=='edit'): ?>
+			<a class="pointer" id="edit_ontology_<?php echo $entry['id']?>" ontology_id="<?php echo $entry['id'];?>" title="<?php echo $lang->translate('Update'); ?>"><i class="icon-pencil"></i></a> / 
+			<?php endif; ?>
+                        <?php if($opt['action']=='delete'): ?>
+			<a class="pointer" id="delete_ontology_<?php echo $entry['id']?>" ontology_id="<?php echo $entry['id'];?>" title="<?php echo $lang->translate('Delete'); ?>"><i class="icon-trash"></i></a>
+			<?php endif; ?>
+			<?php endforeach; ?>
+			</div>
+		</div>
+		<?php endforeach ?>
+	</div>
+	
+</form>	
+<?php else: ?>	
+	<div class="row-fluid center">
+		<h3><?php echo $lang->translate('No Alternative Web Semiotic Units Found'); ?></h3>
+		<input type="hidden" id="section_id" name="section_id" value="<?php echo $this->section_id;?>">
+                <input type="hidden" id="parent_id" name="parent_id" value="<?php echo $this->parent_id;?>">
+                <input type="hidden" id="level" name="level" value="<?php echo $this->level;?>">
+	</div>	
+<?php endif ?>
+
+<?php // if($this->parent_id && $this->parent_id!='undefined'): ?>
+<!--<div class="row-fluid center">-->
+<!--    <a id="atras_<?php // echo $this->parent_id;?>" class="pointer">Atras</a>-->
+<!--</div>-->
+<?php // else: ?>
+ <?php // if($this->section_id):?>
+    <div class="row-fluid center">
+        <a id="ws" class="pointer">Back</a>
+    </div>
+ <?php // endif;?>
+<?php // endif; ?>

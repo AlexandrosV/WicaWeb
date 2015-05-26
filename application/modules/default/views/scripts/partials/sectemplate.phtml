@@ -1,0 +1,97 @@
+<?php $count_contents = 0; ?>
+<?php if(!$this->private || ($this->private && isset($_SESSION['external_user']))): ?>	
+<div class="section_title_container">
+        <h1><?php echo $this->section_title;?></h1>
+</div>
+
+<?php if($this->section_subtitle): ?>
+<div class="section_title_container">
+        <h3><?php echo $this->section_subtitle;?></h3>
+</div>
+<?php endif; ?>
+
+<?php $ite = 0; ?>
+<div id="content_container">
+<?php foreach($this->contents as $key => $value): ?>
+	<?php $section_cols = $this->col_number; ?>
+	<?php $used_cols = $value['columns']; ?>	
+	<?php $row_factor = 12 / $section_cols; ?>
+	<?php if($used_cols): ?>
+	<?php $col_factor = $row_factor * $used_cols; ?>
+	<?php else: ?>
+	<?php $col_factor = 12; ?>
+	<?php endif; ?>
+	<?php $ite+= $used_cols; ?>
+	<div class="span<?php echo $col_factor; ?> col-md-<?php echo $col_factor; ?> no-margin overflow_hidden <?php if($ite > $section_cols): echo 'jump'; $ite = $used_cols; endif; ?>" id="mov_content_<?php echo $value['content_id']; ?>">
+		<?php if($value['title']): ?>
+                
+                <h3><?php echo utf8_encode($value['title']); ?></h3>					
+                
+                <?php endif; ?>
+
+                <?php if($value['content_id'] && $value['section_id']): ?>	
+                <?php 	if($this->isstorage == 'yes'):?>									
+                <?php 		echo $this->previewHelperStorage($value['section_id'], $value['content_id']); ?>
+                <?php 	else:?>
+                <?php 		echo $this->previewHelper($value['section_id'], $value['content_id']); ?>
+                <?php 	endif;?>
+                <?php endif; ?>
+                <?php if(isset($value['content'])): ?>
+                <?php 	echo $value['content']; ?>
+                <?php endif; ?>
+
+                <?php $count_contents++;?>
+	</div>		
+<?php endforeach; ?>
+	<input type="hidden" id="section_cols" name="section_cols" value="<?php echo $this->col_number; ?>">
+</div>
+
+
+<?php if($this->articles): ?>
+<?php $ite = 0; ?>
+<div class="row listNoticias">
+<?php foreach($this->articles as $key => $value): ?>
+	<?php $section_cols = $this->col_number; ?>
+	<?php $used_cols = 1; ?>	
+	<?php $row_factor = 12 / $section_cols; ?>
+	<?php if($used_cols): ?>
+	<?php $col_factor = $row_factor * $used_cols; ?>
+	<?php else: ?>
+	<?php $col_factor = 12; ?>
+	<?php endif; ?>
+	<?php $ite+= $used_cols; ?>
+		<div class="noticia col-md-12 span12 no-margin jump">
+                    <div class="col-md-3">
+                        <a href="/article/<?php echo $value['article_id']; ?>/<?php echo strtolower(GlobalFunctions::formatFilename($value['title']))?>">
+                            <img src="<?php echo imageRender::cache_image($value['image'], array('width' =>'400', 'height'=>'300'));?>" class="img-responsive"/>
+                        </a>
+                    </div>
+                    <?php $fecha = explode("-", $value['publish_date']); ?>
+                    <?php echo $value['publish_date'];?>
+                    <h2>
+                        <a href="/article/<?php echo $value['article_id']; ?>/<?php echo strtolower(GlobalFunctions::formatFilename($value['title']))?>">						
+                            <?php echo $this->escape($value['title']); ?>
+                        </a>
+                    </h2>
+                            <?php echo $value['synopsis']; ?>
+                    <p>&nbsp;</p>
+                    <a href="/article/<?php echo $value['article_id']; ?>/<?php echo strtolower(GlobalFunctions::formatFilename($value['title']))?>" class="pull-right">Ver más</a>								
+            </div>
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
+	
+<?php if(!$count_contents): ?>
+<div class="row-fluid">
+	&nbsp;
+</div>
+<?php endif; ?>
+<?php elseif (!$this->login):?>
+<div class="row-fluid">
+	<?php 	if($this->isstorage == 'yes'):?>									
+	<?php 		echo $this->previewHelper(null,null,$this->area); ?>
+	<?php 	else:?>
+	<?php 		echo $this->previewHelper(null,null,$this->area); ?>
+	<?php 	endif;?>
+</div>
+<?php endif; ?>

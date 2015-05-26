@@ -1,0 +1,34 @@
+<?php $lang = Zend_Registry::get('Zend_Translate'); ?>
+
+<?php if (Zend_Auth::getInstance ()->hasIdentity ()) :?>
+	<?php if($this->displaysectionbar) : ?>
+		<ul class="nav nav-pills pull-right">
+			<?php foreach($this->cms_links as $action_id => $opt): ?>
+			<?php if($opt['action']=='new'): ?>
+			<li class="pointer" id="section_option">
+                            <a id="new_section" <?php $ont = $this->ontologyChange2('Section',$this->section_id); if($ont['count']==0) echo ''; else echo 'title="New Section" style="color:#FF0112"';?>>
+		      		<?php echo $this->escape('New '.$ont['phrase']); ?> 
+				</a>
+		    </li>
+		    <li class="hide pointer" id="article_option">
+		    	<a id="new_article" <?php $ont = $this->ontologyChange2('Article',$this->section_id); if($ont['count']==0) echo ''; else echo 'title="New Article" style="color:#FF0112"';?>>
+		      		<?php echo $this->escape('New '.$ont['phrase']); ?> 
+				</a>     
+		    </li>
+		    <li class="hide pointer" id="content_option">
+		    	<a id="new_content" <?php $ont = $this->ontologyChange2('Content',$this->section_id); if($ont['count']==0) echo ''; else echo 'title="New Content" style="color:#FF0112"';?>>
+		      		<?php echo $this->escape('New '.$ont['phrase']); ?> 
+				</a>     
+		    </li>
+		    <?php endif; ?>
+		    <?php if($opt['action']=='linksection'): ?>
+		    <li class="hide pointer" id="content_link_option">
+		        <a id="content_link" <?php $ont = $this->ontologyChange2('Link Content',$this->section_id); if($ont['count']==0) echo ''; else echo 'title="Link Content" style="color:#FF0112"';?>>
+		      		<?php echo $this->escape($ont['phrase']); ?> 
+				</a>
+			</li>
+			<?php endif; ?>
+			<?php endforeach; ?>
+		</ul>		
+	<?php endif;?>
+<?php endif;?>

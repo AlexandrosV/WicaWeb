@@ -1,0 +1,25 @@
+<?php $lang = Zend_Registry::get('Zend_Translate'); ?>
+<?php if ($this->ontology_list && count($this->ontology_list)>0): ?>
+    <?php $count=0;?>
+    <?php foreach ($this->ontology_list as $k => $entry): ?>
+
+    <?php $count++;?>
+    <div class="row-fluid line">
+        <div class="span4">&nbsp;</div>	
+            <div class="span4">
+                <div class="control-group">
+                    <input type="hidden" name="id_<?php echo $count;?>" id="id_<?php echo $count;?>" value="<?php echo $entry['id'];?>">
+                    <input type="hidden" name="original_<?php echo $count;?>" id="original_<?php echo $count;?>" value="<?php echo $entry['original'];?>">
+                    <label class="control-label"><?php echo $lang->translate($entry['original']).':';?></label>
+                    <div class="controls">
+                        <input type="text" name="semiotic_<?php echo $count;?>" id="semiotic_<?php echo $count;?>">
+                    </div>
+                </div>
+            </div>
+	    <div class="span4">&nbsp;</div>
+    </div>
+
+    <?php endforeach ?>
+<input type="hidden" name="count" id="count" value="<?php echo $count;?>">
+<?php endif ?>
+                
